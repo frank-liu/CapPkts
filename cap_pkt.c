@@ -23,6 +23,7 @@
 #define IP_HDR_LEN 20
 #define UDP_HDR_LEN 8
 #define TCP_HDR_LEN 20
+#define WNIC "eth1"
 
 static int sock;
 
@@ -37,7 +38,7 @@ void sig_handler(int sig)
 		printf("SIGQUIT recieved, exiting...\n");
 
 	// turn off the PROMISCOUS mode
-	strncpy(ethreq.ifr_name, "eth0", IFNAMSIZ);
+	strncpy(ethreq.ifr_name, WNIC, IFNAMSIZ);
 	if (ioctl(sock, SIOCGIFFLAGS, &ethreq) != -1)
 	{
 		ethreq.ifr_flags &= ~IFF_PROMISC;
@@ -111,7 +112,7 @@ int main(int argc, char ** argv)
 	}
 
 	// set NIC to promiscous mode, so we can recieve all packets of the network
-	strncpy(ethreq.ifr_name, "eth0", IFNAMSIZ);
+	strncpy(ethreq.ifr_name, WNIC, IFNAMSIZ);
 	if (ioctl(sock, SIOCGIFFLAGS, &ethreq) == -1)
 	{
 		perror("ioctl");
