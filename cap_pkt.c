@@ -73,6 +73,7 @@ int main(int argc, char ** argv)
 #0
 #endif
 
+	/*如果我们只对用户192.168.1.4的数据感兴趣,BPF代码如下:*/
 	struct sock_filter bpf_code[] =
 	{
 	{ 0x28, 0, 0, 0x0000000c },
@@ -126,7 +127,7 @@ int main(int argc, char ** argv)
 		exit(1);
 	}
 
-	// attach the bpf filter
+	// attach the bpf filter,把过滤器安装到套接口上
 	if (setsockopt(sock, SOL_SOCKET, SO_ATTACH_FILTER, &filter, sizeof(filter))
 			== -1)
 	{
