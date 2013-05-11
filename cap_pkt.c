@@ -23,6 +23,8 @@
 #define IP_HDR_LEN 20
 #define UDP_HDR_LEN 8
 #define TCP_HDR_LEN 20
+
+/*Specify our wireless card name in here:*/
 #define WNIC "eth1"
 
 static int sock;
@@ -56,6 +58,7 @@ int main(int argc, char ** argv)
 	unsigned char *iphead;
 	struct ifreq ethreq;
 	struct sigaction sighandle;
+	printf("Start to capture packets...\n");
 
 #if 0
 	$tcpdump ip -s 2048 -d host 192.168.1.2
@@ -74,17 +77,11 @@ int main(int argc, char ** argv)
 #0
 #endif
 
-	/*如果我们只对用户192.168.1.4的数据感兴趣,BPF代码如下:*/
+	/*如果我们对eth1采集的数据感兴趣,BPF代码如下:*/
 	struct sock_filter bpf_code[] =
 	{
-	{ 0x28, 0, 0, 0x0000000c },
-	{ 0x15, 0, 5, 0x00000800 },
-	{ 0x20, 0, 0, 0x0000001a },
-	{ 0x15, 2, 0, 0xc0a80102 },
-	{ 0x20, 0, 0, 0x0000001e },
-	{ 0x15, 0, 1, 0xc0a80102 },
-	{ 0x6, 0, 0, 0x00000800 },
-	{ 0x6, 0, 0, 0x00000000 } };
+			{ 0x6, 0, 0, 0x00000060 }
+	};
 
 	struct sock_fprog filter;
 	filter.len = sizeof(bpf_code) / sizeof(bpf_code[0]);
@@ -184,5 +181,6 @@ int main(int argc, char ** argv)
 	}
 
 	close(sock);
+	printf("Stop capturing packets!\n");
 	exit(0);
 }
